@@ -142,16 +142,16 @@ func TestTopology_SortWorst(t *testing.T) {
 	}
 }
 
-var testCases = map[string][][]string{
+var testCases = map[string][]string{
 	`
 a -> b
 a -> c
-`: [][]string{{"a"}, {"b", "c"}},
+`: []string{"a", "b", "c"},
 	`
 a -> b
 a -> c
 c -> d
-`: [][]string{{"a"}, {"b", "c"}, {"d"}},
+`: []string{"a", "b", "c", "d"},
 	`
 a -> b
 b -> a
@@ -161,7 +161,7 @@ c -> d
 b -> d
 a -> c
 a -> b
-`: [][]string{{"a"}, {"b", "c"}, {"d"}},
+`: []string{"a", "b", "c", "d"},
 }
 
 func sort2string(ns []Node) string {
@@ -172,7 +172,7 @@ func sort2string(ns []Node) string {
 	return strings.Join(ss, " ")
 }
 
-func doTestCase(t *testing.T, topo string, result [][]string) {
+func doTestCaseBench(t *testing.B, topo string, result []string) {
 	tp := parseTopology(topo)
 	sort, err := tp.Sort()
 	if result == nil && err == nil {
@@ -185,30 +185,38 @@ func doTestCase(t *testing.T, topo string, result [][]string) {
 		t.Errorf("error sorting: %s", err)
 		return
 	}
-	offset := 0
-	for i := 0; i < len(result); i++ {
-		if result == nil {
-			break
-		}
-		for _, rv := range result[i] {
-			found := false
-			for _, sv := range sort[offset : offset+len(result[i])] {
-				if rv == string(sv.Id()) {
-					found = true
-					break
-				}
-			}
-			if !found {
-				t.Errorf("mismatch for result val %s, not in sort range [%d:%d]", rv, offset, offset+len(result[i]))
-			}
-
-		}
-		offset += len(result[i])
+	if len(result) != len(sort) {
+		t.Errorf("mismatched length from sort: %d != %d", len(result), len(sort))
+	}
+}
+func doTestCase(t *testing.T, topo string, result []string) {
+	tp := parseTopology(topo)
+	sort, err := tp.Sort()
+	if result == nil && err == nil {
+		t.Errorf("got valid sort from unsortable test case: %s => %#v got %s", topo, result, sort2string(sort))
+	}
+	if result == nil && err != nil {
+		return
+	}
+	if err != nil {
+		t.Errorf("error sorting: %s", err)
+		return
+	}
+	if len(result) != len(sort) {
+		t.Errorf("mismatched length from sort: %d != %d", len(result), len(sort))
 	}
 }
 func TestTopology_SortVarious(t *testing.T) {
 	for topo, res := range testCases {
 		doTestCase(t, topo, res)
+	}
+}
+
+func BenchmarkTopology_SortVarious(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		for topo, res := range testCases {
+			doTestCaseBench(b, topo, res)
+		}
 	}
 }
 func BenchmarkTopology_Sort(b *testing.B) {
