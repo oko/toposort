@@ -3,6 +3,7 @@ module github.com/oko/toposort
 go 1.13
 
 require (
+	github.com/emirpasic/gods v1.12.0
 	github.com/fatih/color v1.7.0 // indirect
 	github.com/jessevdk/go-flags v1.4.0 // indirect
 	github.com/mattn/go-colorable v0.1.2 // indirect

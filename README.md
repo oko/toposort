@@ -1,12 +1,14 @@
 # `toposort`: a topological sorting library
 
-This package implements a basic topological sorting library using Khan's algorithm.
+This package implements a basic topological sorting library using Khan's algorithm. Sorts from this library should be deterministic.
 
 ## Topological Sorting
 
 > In computer science, a topological sort or topological ordering of a directed graph is a linear ordering of its vertices such that for every directed edge uv from vertex u to vertex v, u comes before v in the ordering. &mdash;[Wikipedia](https://en.wikipedia.org/wiki/Topological_sorting)
 
 ![Image of graph and its topological sorting](https://raw.githubusercontent.com/oko/toposort/master/example/bigger.topo.png)
+
+Sorts generated should be deterministic, i.e. if you run the sort many times the output will be the same for all sorts.
 
 ## Example
 

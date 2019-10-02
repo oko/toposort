@@ -2,6 +2,10 @@ package toposort
 
 import (
 	"errors"
+
+	"github.com/emirpasic/gods/utils"
+
+	"github.com/emirpasic/gods/trees/binaryheap"
 )
 
 var (
@@ -37,6 +41,19 @@ func (t *Topology) AddEdge(from, to Node) error {
 	return nil
 }
 
+func comparator(a, b interface{}) int {
+	return utils.StringComparator(a.(Node).Id(), b.(Node).Id())
+}
+
+func edgeComparator(a, b interface{}) int {
+	ae := a.(Edge)
+	be := b.(Edge)
+	if ae.From.Id() != be.From.Id() {
+		return utils.StringComparator(ae.From.Id(), be.From.Id())
+	}
+	return utils.StringComparator(ae.To.Id(), be.To.Id())
+}
+
 // Sort returns a valid topological sorting of this topology's nodes
 func (t *Topology) Sort() ([]Node, error) {
 
@@ -58,24 +75,33 @@ func (t *Topology) Sort() ([]Node, error) {
 			    return L   (a topologically sorted order)
 	*/
 	L := make([]Node, 0, len(t.nodes))
-	S := t.starts()
+	Sq := binaryheap.NewWith(comparator)
+	for _, x := range t.starts() {
+		Sq.Push(x)
+	}
 	edges := t.edges.Copy()
 
 	i := 0
 	for {
-		if len(S) == 0 {
+		if Sq.Empty() {
 			break
 		}
 		var n Node
 
-		n, S = S[0], S[1:]
+		ni, _ := Sq.Pop()
+		n = ni.(Node)
 		L = append(L, n)
 
+		eq := binaryheap.NewWith(edgeComparator)
 		for _, e := range edges[n.Id()] {
-			m := e.To
+			eq.Push(e)
+		}
+		for !eq.Empty() {
+			mi, _ := eq.Pop()
+			m := mi.(Edge).To
 			delete(edges[n.Id()], m.Id())
 			if !edges.HasIncoming(m) {
-				S = append(S, m)
+				Sq.Push(m)
 			}
 		}
 		i++
