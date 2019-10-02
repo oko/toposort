@@ -5,7 +5,7 @@ type Node interface {
 	Id() string
 }
 
-// Nodes represents the set of nodes in a topology
+// Nodes represents the set of Nodes in a topology
 type Nodes map[string]Node
 
 // Add adds a node to this Nodes set

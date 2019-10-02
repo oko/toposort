@@ -46,11 +46,11 @@ func TestNewTopology(t *testing.T) {
 	if nt == nil {
 		t.Fatalf("topology returned was nil")
 	}
-	if nt.nodes == nil {
-		t.Fatalf("did not initialize Topology.nodes in NewTopology")
+	if nt.Nodes == nil {
+		t.Fatalf("did not initialize Topology.Nodes in NewTopology")
 	}
-	if nt.edges == nil {
-		t.Fatalf("did not initialize Topology.edges in NewTopology")
+	if nt.Edges == nil {
+		t.Fatalf("did not initialize Topology.Edges in NewTopology")
 	}
 }
 func TestTopology_AddNode(t *testing.T) {
@@ -58,13 +58,13 @@ func TestTopology_AddNode(t *testing.T) {
 	if err := nt.AddNode(&NodeTest{ID: "a"}); err != nil {
 		t.Fatalf("failed to add node to topology: %s", err)
 	}
-	if _, ok := nt.nodes["a"]; !ok {
+	if _, ok := nt.Nodes["a"]; !ok {
 		t.Fatalf("Topology.AddNode didn't actually add node")
 	}
-	if len(nt.nodes) != 1 {
+	if len(nt.Nodes) != 1 {
 		t.Fatalf("expected a node to be added to topology")
 	}
-	if nt.nodes["a"].Id() != "a" {
+	if nt.Nodes["a"].Id() != "a" {
 		t.Fatalf("somehow ended up with a different node added?")
 	}
 }
@@ -74,7 +74,7 @@ func TestTopology_AddEdge(t *testing.T) {
 	a := &NodeTest{ID: "a"}
 	b := &NodeTest{ID: "b"}
 	if err := nt.AddEdge(a, b); err == nil {
-		t.Fatalf("should have errored with edges added after nodes")
+		t.Fatalf("should have errored with Edges added after Nodes")
 	}
 }
 

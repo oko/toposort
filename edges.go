@@ -6,7 +6,7 @@ type Edge struct {
 	To   Node
 }
 
-// EdgesFromNode represents a set of edges leaving a node
+// EdgesFromNode represents a set of Edges leaving a node
 type EdgesFromNode map[string]Edge
 
 // Copy returns a copy of EdgesFromNode
@@ -18,7 +18,7 @@ func (ne EdgesFromNode) Copy() EdgesFromNode {
 	return e
 }
 
-// Edges represents the set of all edges in a topology
+// Edges represents the set of all Edges in a topology
 // grouped by origin node
 type Edges map[string]EdgesFromNode
 
@@ -30,7 +30,7 @@ func (e Edges) AddEdge(from, to Node) {
 	e[from.Id()][to.Id()] = Edge{from, to}
 }
 
-// HasIncoming returns whether a node has incoming edges
+// HasIncoming returns whether a node has incoming Edges
 func (e Edges) HasIncoming(n Node) bool {
 	for _, ne := range e {
 		if ne == nil {
@@ -43,7 +43,7 @@ func (e Edges) HasIncoming(n Node) bool {
 	return false
 }
 
-// Count returns the total count of edges
+// Count returns the total count of Edges
 func (e Edges) Count() int {
 	count := 0
 	for _, ne := range e {
@@ -55,7 +55,7 @@ func (e Edges) Count() int {
 	return count
 }
 
-// Copy returns a copy of the entire edges structure
+// Copy returns a copy of the entire Edges structure
 func (e Edges) Copy() Edges {
 	c := make(Edges)
 	for k, v := range e {

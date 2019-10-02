@@ -17,27 +17,27 @@ var (
 
 // Topology represents an entire graph topology
 type Topology struct {
-	nodes Nodes
-	edges Edges
+	Nodes Nodes
+	Edges Edges
 }
 
 // NewTopology returns a new topology
 func NewTopology() *Topology {
 	return &Topology{
-		nodes: make(Nodes),
-		edges: make(Edges),
+		Nodes: make(Nodes),
+		Edges: make(Edges),
 	}
 }
 
 func (t *Topology) AddNode(n Node) error {
-	return t.nodes.Add(n)
+	return t.Nodes.Add(n)
 }
 
 func (t *Topology) AddEdge(from, to Node) error {
-	if !t.nodes.Has(from) || !t.nodes.Has(to) {
+	if !t.Nodes.Has(from) || !t.Nodes.Has(to) {
 		return ErrNodeDoesNotExist
 	}
-	t.edges.AddEdge(from, to)
+	t.Edges.AddEdge(from, to)
 	return nil
 }
 
@@ -54,32 +54,32 @@ func edgeComparator(a, b interface{}) int {
 	return utils.StringComparator(ae.To.Id(), be.To.Id())
 }
 
-// Sort returns a valid topological sorting of this topology's nodes
+// Sort returns a valid topological sorting of this topology's Nodes
 func (t *Topology) Sort() ([]Node, error) {
 
 	/*
 		Implementation of Kahn's algorithm: Wikipedia pseudocode
 
 			L ← Empty list that will contain the sorted elements
-			S ← Set of all nodes with no incoming edge
+			S ← Set of all Nodes with no incoming edge
 			while S is non-empty do
 			    remove a node n from S
 			    add n to tail of L
 			    for each node m with an edge e from n to m do
 			        remove edge e from the graph
-			        if m has no other incoming edges then
+			        if m has no other incoming Edges then
 			            insert m into S
-			if graph has edges then
+			if graph has Edges then
 			    return error   (graph has at least one cycle)
 			else
 			    return L   (a topologically sorted order)
 	*/
-	L := make([]Node, 0, len(t.nodes))
+	L := make([]Node, 0, len(t.Nodes))
 	Sq := binaryheap.NewWith(comparator)
 	for _, x := range t.starts() {
 		Sq.Push(x)
 	}
-	edges := t.edges.Copy()
+	edges := t.Edges.Copy()
 
 	i := 0
 	for {
@@ -118,8 +118,8 @@ func (t *Topology) Sort() ([]Node, error) {
 }
 
 func (t *Topology) bound() int {
-	sum := len(t.nodes)
-	for _, ne := range t.edges {
+	sum := len(t.Nodes)
+	for _, ne := range t.Edges {
 		sum += len(ne)
 	}
 	return sum
@@ -127,8 +127,8 @@ func (t *Topology) bound() int {
 
 func (t *Topology) starts() []Node {
 	ret := make([]Node, 0)
-	for _, n := range t.nodes {
-		if t.edges.HasIncoming(n) {
+	for _, n := range t.Nodes {
+		if t.Edges.HasIncoming(n) {
 			continue
 		}
 		ret = append(ret, n)

@@ -23,10 +23,10 @@ func TestEdges_AddEdge(t *testing.T) {
 	edges := make(Edges)
 	edges.AddEdge(a, b)
 	if _, ok := edges["a"]; !ok {
-		t.Fatalf("Edges.AddEdge(a, b) did not add edges[a]")
+		t.Fatalf("Edges.AddEdge(a, b) did not add Edges[a]")
 	}
 	if _, ok := edges["a"]["b"]; !ok {
-		t.Fatalf("Edges.AddEdge(a, b) did not add edges[a][b]")
+		t.Fatalf("Edges.AddEdge(a, b) did not add Edges[a][b]")
 	}
 }
 func TestEdges_Count(t *testing.T) {
@@ -40,6 +40,6 @@ func TestEdges_Count(t *testing.T) {
 	}
 
 	if edges.HasIncoming(a) {
-		t.Errorf("b should not have incoming edges")
+		t.Errorf("b should not have incoming Edges")
 	}
 }
