@@ -66,11 +66,37 @@ func main() {
 	}
 	sort, err := topo.Sort()
 	if err != nil {
+		if cy, ok := err.(*toposort.ErrCycleInTopology); ok {
+			log.Printf("finding candidate cycles...")
+			findCycles(cy)
+		}
 		log.Fatalf("failed to sort topo: %s", err)
 	}
 
 	printBaseTopo(sort, edges)
 
+}
+
+func findCycles(e *toposort.ErrCycleInTopology) {
+	ex := make(map[string]bool)
+	for _, edges := range e.OriginalEdges {
+		for _, e := range edges {
+			es := fmt.Sprintf("%s->%s", e.From.Id(), e.To.Id())
+			if _, ok := ex[es]; ok {
+				log.Printf("possible dupe? %s", es)
+			}
+			ex[es] = true
+		}
+	}
+	for _, edges := range e.RemainingEdges {
+		for _, e := range edges {
+			es := fmt.Sprintf("%s->%s", e.To.Id(), e.From.Id())
+			if _, ok := ex[es]; ok {
+				log.Printf("possible dupe? %s", es)
+			}
+			ex[es] = true
+		}
+	}
 }
 
 // this should really be a template.........

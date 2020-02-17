@@ -11,9 +11,17 @@ import (
 var (
 	ErrNodeExists       = errors.New("node already exists in topology")
 	ErrNodeDoesNotExist = errors.New("node does not exist in topology")
-	ErrCycleInTopology  = errors.New("topology has a cycle")
 	ErrRuntimeExceeded  = errors.New("sort runtime exceeded bound")
 )
+
+type ErrCycleInTopology struct {
+	OriginalEdges  Edges
+	RemainingEdges Edges
+}
+
+func (e *ErrCycleInTopology) Error() string {
+	return "cycle in topology"
+}
 
 // Topology represents an entire graph topology
 type Topology struct {
@@ -112,7 +120,7 @@ func (t *Topology) Sort() ([]Node, error) {
 		}
 	}
 	if edges.Count() > 0 {
-		return nil, ErrCycleInTopology
+		return nil, &ErrCycleInTopology{OriginalEdges: t.Edges.Copy(), RemainingEdges: edges.Copy()}
 	}
 	return L, nil
 }
